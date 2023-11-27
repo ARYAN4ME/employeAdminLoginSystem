@@ -29,14 +29,19 @@ public class AdminService {
 
     public String loginAdmin(String email, String password) throws Exception {
         BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
-        Admin admin = adminRepository.findById(email).get();
-        if(bcrypt.matches(password, admin.getPassword())){
-            return admin.getName()+" login successfully";
+        Optional<Admin> a = adminRepository.findById(email);
+//        Admin admin = adminRepository.findById(email).get();
+        if(a.isPresent()){
+            Admin admin = a.get();
+            if(bcrypt.matches(password, admin.getPassword())){
+                return admin.getName()+" login successfully";
+            }
+            else return "Incorrect Password";
         }
-        else return "Incorrect Password";
+        throw new Exception( email +"user is not exist");
     }
 
-    public void updateEmployeeStatusByEmail(String email) {
+    public void updateEmployeeStatusByEmail(String email) throws Exception {
         Employee employee = employeeRepository.findById(email).get();
         if(employee.getStatus().equals("PENDING")){
             if((employee.getDegree().equals("BBA") || employee.getDegree().equals("BCA") || employee.getDegree().equals("BTECH")) && employee.getIsExperienceLetter().equals("yes")){
@@ -46,5 +51,6 @@ public class AdminService {
                 employee.setStatus(Status.valueOf("NOTELIGIBLE"));
             }
         }
+        throw new Exception("you should write correct email");
     }
 }

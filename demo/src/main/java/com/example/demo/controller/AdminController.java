@@ -20,7 +20,7 @@ public class AdminController {
         return adminService.loginAdmin(email,password);
     }
     @PutMapping("/updateStatus")
-    public void updateEmployeeStatusByEmail(@RequestParam("email") String email){
+    public void updateEmployeeStatusByEmail(@RequestParam("email") String email) throws Exception{
         adminService.updateEmployeeStatusByEmail(email);
     }
 
