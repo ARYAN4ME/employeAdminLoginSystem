@@ -16,7 +16,7 @@ public class AdminController {
         return adminService.addAdmin(admin);
     }
     @GetMapping("/login/{email}/{password}")
-    public Admin loginAdmin(@PathVariable("email") String email,@PathVariable("password") String password) throws Exception {
+    public String  loginAdmin(@PathVariable("email") String email,@PathVariable("password") String password) throws Exception {
         return adminService.loginAdmin(email,password);
     }
     @PutMapping("/updateStatus")

@@ -8,9 +8,10 @@ import com.example.demo.enums.Status;
 import com.example.demo.repository.AdminRepository;
 import com.example.demo.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AdminService {
@@ -19,37 +20,30 @@ public class AdminService {
     @Autowired
     EmployeeRepository employeeRepository;
     public String addAdmin(Admin admin) {
-//        List<Admin> adminList = adminRepository.findAll();
-//        for(Admin e : adminList){
-//            if(e.getEmail().equals(admin.getEmail())){
-//                return "Admin already exist";
-//            }
-//
-//        }
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        String encryptedPassword = bcrypt.encode(admin.getPassword());
+        admin.setPassword(encryptedPassword);
         adminRepository.save(admin);
-        return "Admin added successfully";
+        return admin.getName()+" added successfully";
     }
 
-    public Admin loginAdmin(String email, String password) throws Exception {
-        List<Admin> adminList = adminRepository.findAll();
-        for(Admin e : adminList){
-            if(e.getEmail().equals(email)){
-                if(e.getPassword().equals(password)){
-                    return e;
-                }
-            }
+    public String loginAdmin(String email, String password) throws Exception {
+        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+        Admin admin = adminRepository.findById(email).get();
+        if(bcrypt.matches(password, admin.getPassword())){
+            return admin.getName()+" login successfully";
         }
-        return null;
+        else return "Incorrect Password";
     }
 
     public void updateEmployeeStatusByEmail(String email) {
         Employee employee = employeeRepository.findById(email).get();
-        if(employee.getStatus().equals(Status.PENDING)){
-            if((employee.getDegree().equals(Degree.BBA) || employee.getDegree().equals(Degree.BCA) || employee.getDegree().equals(Degree.BTECH)) && employee.getIsExperienceLetter().equals("yes")){
-                employee.setStatus(Status.SUCCESS);
+        if(employee.getStatus().equals("PENDING")){
+            if((employee.getDegree().equals("BBA") || employee.getDegree().equals("BCA") || employee.getDegree().equals("BTECH")) && employee.getIsExperienceLetter().equals("yes")){
+                employee.setStatus(Status.valueOf("SUCCESS"));
             }
             else{
-                employee.setStatus(Status.NOTELIGIBLE);
+                employee.setStatus(Status.valueOf("NOTELIGIBLE"));
             }
         }
     }
