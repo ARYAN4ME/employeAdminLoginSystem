@@ -19,9 +19,9 @@ public class AdminController {
     public String  loginAdmin(@PathVariable("email") String email,@PathVariable("password") String password) throws Exception {
         return adminService.loginAdmin(email,password);
     }
-    @PutMapping("/updateStatus")
-    public void updateEmployeeStatusByEmail(@RequestParam("email") String email) throws Exception{
-        adminService.updateEmployeeStatusByEmail(email);
+    @PutMapping("/updateStatus/{email}")
+    public String updateEmployeeStatusByEmail(@PathVariable("email") String email) throws Exception{
+       return adminService.updateEmployeeStatusByEmail(email);
     }
 
 }

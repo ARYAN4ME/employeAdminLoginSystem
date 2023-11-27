@@ -27,5 +27,5 @@ public class Employee {
     private Degree degree;
     private String isExperienceLetter;
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status = Status.PENDING;
 }

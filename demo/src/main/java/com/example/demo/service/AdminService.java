@@ -30,7 +30,6 @@ public class AdminService {
     public String loginAdmin(String email, String password) throws Exception {
         BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
         Optional<Admin> a = adminRepository.findById(email);
-//        Admin admin = adminRepository.findById(email).get();
         if(a.isPresent()){
             Admin admin = a.get();
             if(bcrypt.matches(password, admin.getPassword())){
@@ -38,19 +37,26 @@ public class AdminService {
             }
             else return "Incorrect Password";
         }
-        throw new Exception( email +"user is not exist");
+        throw new Exception( email +" is not exist");
     }
 
-    public void updateEmployeeStatusByEmail(String email) throws Exception {
-        Employee employee = employeeRepository.findById(email).get();
-        if(employee.getStatus().equals("PENDING")){
-            if((employee.getDegree().equals("BBA") || employee.getDegree().equals("BCA") || employee.getDegree().equals("BTECH")) && employee.getIsExperienceLetter().equals("yes")){
-                employee.setStatus(Status.valueOf("SUCCESS"));
+    public String updateEmployeeStatusByEmail(String email) throws Exception {
+        Optional<Employee> e = employeeRepository.findById(email);
+        if(e.isPresent()){
+           Employee employee = e.get();
+            if(employee.getStatus().equals(Status.PENDING)){
+                if((employee.getDegree().equals(Degree.BBA) || employee.getDegree().equals(Degree.BCA) || employee.getDegree().equals(Degree.BTECH)) && employee.getIsExperienceLetter().equals("yes")){
+                    employee.setStatus(Status.SUCCESS);
+                }
             }
-            else{
-                employee.setStatus(Status.valueOf("NOTELIGIBLE"));
+            else {
+                return employee.getName() +" data already verified";
             }
+            employeeRepository.save(employee);
         }
-        throw new Exception("you should write correct email");
+        else {
+            throw new Exception("you should write correct email");
+        }
+        return e.get().getName()+" document is verify";
     }
 }

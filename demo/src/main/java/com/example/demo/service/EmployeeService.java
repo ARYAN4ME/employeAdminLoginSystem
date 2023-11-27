@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 
 
 @Service
@@ -21,13 +22,18 @@ public class EmployeeService {
         return employee.getName()+" added Successfully";
     }
 
-    public String loginEmployee(String email, String password){
+    public String loginEmployee(String email, String password) throws Exception{
         BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
-        Employee employee = employeeRepository.findById(email).get();
+        Optional<Employee> e = employeeRepository.findById(email);
+        if(e.isPresent()){
+            Employee employee = e.get();
             if(bcrypt.matches(password,employee.getPassword())){
                 return employee.getName()+" Login Successfully";
             }
             else return "Incorrect Password";
+        }
+
+        throw new Exception(email +" is not exist");
     }
 }
 
